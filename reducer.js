@@ -8,6 +8,7 @@ const init = {
         active: (todo) => !todo.completed,
         completed: (todo) => todo.completed,
     },
+    editIndex: null,
 };
 
 const actions = {
@@ -36,6 +37,23 @@ const actions = {
     clearCompleted(state) {
         state.todos = state.todos.filter(state.filters.active);
         storage.set(state.todos);
+    },
+    startEdit(state, index) {
+        state.editIndex = index;
+    },
+    endEdit(state, title) {
+        if (state.editIndex != null) {
+            if (title) {
+                state.todos[state.editIndex].title = title;
+                storage.set(state.todos);
+            } else {
+                this.destroy(state, state.editIndex);
+            }
+            state.editIndex = null;
+        }
+    },
+    cancelEdit(state) {
+        state.editIndex = null;
     },
 };
 
