@@ -3,10 +3,10 @@ import { connect } from "../store.js";
 
 const connector = connect();
 
-function TodoItem({ todo, index, editIndex }) {
+function TodoItem({ todo, index, editIndex, priorities }) {
     return html`
         <li class="${todo.completed && "completed"} ${editIndex === index && "editing"}">
-            <div class="view">
+            <div class="view ${todo.priority}">
                 <input
                     class="toggle"
                     type="checkbox"
@@ -14,6 +14,20 @@ function TodoItem({ todo, index, editIndex }) {
                     onchange="dispatch('toggle', ${index})"
                 />
                 <label ondblclick="dispatch('startEdit', ${index})">${todo.title}</label>
+
+                <select
+                    name="priority"
+                    id="priority-select"
+                    onchange="dispatch('addPriority', ${index}, this.value.trim())"
+                >
+                    ${Object.keys(priorities).map(
+                        (option) => html`
+                            <option value="${option}" ${todo.priority === option ? "selected" : ""}>
+                                ${option[0].toUpperCase() + option.slice(1)}
+                            </option>
+                        `
+                    )}
+                </select>
                 <button class="destroy" onclick="dispatch('destroy', ${index})"></button>
             </div>
             <input

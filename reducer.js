@@ -9,12 +9,17 @@ const init = {
         completed: (todo) => todo.completed,
     },
     editIndex: null,
+    priorities: {
+        important: 0,
+        normal: 1,
+        unimportant: 2,
+    },
 };
 
 const actions = {
     add({ todos }, title) {
         if (title) {
-            todos.push({ title, completed: false });
+            todos.push({ title, completed: false, priority: "normal" });
             storage.set(todos);
         }
     },
@@ -54,6 +59,13 @@ const actions = {
     },
     cancelEdit(state) {
         state.editIndex = null;
+    },
+    addPriority(state, index, priority) {
+        const todo = state.todos[index];
+        todo.priority = priority;
+        storage.set(state.todos);
+        state.todos.sort((a, b) => state.priorities[a.priority] - state.priorities[b.priority]);
+        storage.set(state.todos);
     },
 };
 
